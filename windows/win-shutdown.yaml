@@ -1,7 +1,6 @@
 ---
 # ansible-playbook windows/win-shutdown.yaml --ask-vault-pass -l test
-- name: Shutdown Windows machines
-  hosts: all
+- hosts: all
   vars_files:
     'win-passwords.yaml'
   tasks:

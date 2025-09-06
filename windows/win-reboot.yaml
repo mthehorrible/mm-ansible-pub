@@ -1,7 +1,6 @@
 ---
 # ansible-playbook windows/win-reboot.yaml --ask-vault-pass -l test
-- name: Reboot Windows machines
-  hosts: all
+- hosts: all
   vars_files:
     'win-passwords.yaml' 
   tasks:
