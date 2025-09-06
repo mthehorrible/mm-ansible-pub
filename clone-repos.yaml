@@ -1,0 +1,17 @@
+---
+# ansible-playbook clone-repos.yaml
+- hosts: localhost
+  vars:
+    repo_name: <REPO-NAME> #ex. "mm-ansible-pub"
+    path: <PATH-TO-CLONE-TO> #ex. "/home/mthehorrible/git"
+    repo_address: <REPO-ADDRESS> #ex. "git@github.com:mthehorrible/mm-ansible-pub.git"
+
+  tasks:
+
+   - name: "Clone {{ repo_name }} repo"
+     git:
+       repo: "{{ repo_address }}"
+       dest: "{{ path }}/{{ repo_name }}/"
+       clone: yes
+       update: yes
+...

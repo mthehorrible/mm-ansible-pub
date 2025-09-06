@@ -1,0 +1,78 @@
+# ansible-playbook -i hosts -Kk sssd-update.yaml --check
+---
+- hosts: all
+  become: yes
+  vars:
+    primarydc: <PRIMARY-DC>
+    backupdcs: <SECONDARY-DCS>
+    domain_regex: '^\[domain\/EXAMPLE\.COM\]'
+  tasks:
+
+  - name: Make a backup copy of sssd.conf
+    ansible.builtin.copy:
+      src: /etc/sssd/sssd.conf
+      dest: "/etc/sssd/sssd_{{ '%Y%m%d-%H%M%S' | strftime }}.bck"
+      remote_src: yes
+
+  - name: Update "Ansible update" line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^#\sUpdated\sby\sAnsible'
+      insertbefore: BOF
+      line: "# Updated by Ansible {{ '%Y-%m-%d' | strftime }}"
+      state: present
+
+  - name: Update ad_server line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^ad_server'
+      insertafter: "{{ domain_regex }}"
+      line: "ad_server = {{ primarydc }}"
+      state: present
+
+  - name: Update ad_backup_server line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^ad_backup_server'
+      insertafter: '^ad_server'
+      line: "ad_backup_server = {{ backupdcs }}"
+      state: present
+
+  - name: Update dyndns_update line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^dyndns_update'
+      insertafter: '^simple_allow_groups'
+      line: "dyndns_update = true"
+      state: present
+
+  - name: Update dyndns_refresh_interval line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^dyndns_refresh_interval'
+      insertafter: '^dyndns_update'
+      line: "dyndns_refresh_interval = 86400"
+      state: present
+
+  - name: Update dyndns_update_ptr line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^dyndns_update_ptr'
+      insertafter: '^dyndns_refresh_interval'
+      line: "dyndns_update_ptr = true"
+      state: present
+
+  - name: Update dyndns_ttl line
+    ansible.builtin.lineinfile:
+      path: /etc/sssd/sssd.conf
+      regexp: '^dyndns_ttl'
+      insertafter: '^dyndns_update_ptr'
+      line: "dyndns_ttl = 3600"
+      state: present
+
+  - name: Restart service sssd
+    become: yes
+    ansible.builtin.service:
+      name: sssd
+      state: restarted
+...

@@ -1,0 +1,21 @@
+---
+# ansible-playbook -i hosts -b -K -T 120 timesync-restart.yaml --check
+# ansible-playbook -i hosts -b -K -T 120 --tags checkOnly timesync-restart.yaml
+- name: Restart systemd-timesyncd service and checks status
+  hosts: all
+  become: yes
+  tasks:
+
+  - name: Restart service systemd-timesyncd
+    ansible.builtin.service:
+      name: systemd-timesyncd
+      state: restarted
+
+  - name: Check timedatectl
+    shell: timedatectl | grep "System clock synchronized"
+    register: timedatectlOutput
+    tags: checkOnly
+
+  - debug: var=timedatectlOutput.stdout
+    tags: checkOnly
+...

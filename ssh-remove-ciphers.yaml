@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+    - name: Remove "hmac-sha1-etm@openssh.com"
+      ansible.builtin.replace:
+        path: /etc/crypto-policies/back-ends/opensshserver.config
+        regexp: 'hmac-sha1-etm@openssh.com,'
+        replace: ''
+        backup: yes
+    
+    - name: Remove "hmac-sha1"
+      ansible.builtin.replace:
+        path: /etc/crypto-policies/back-ends/opensshserver.config
+        regexp: 'hmac-sha1,'
+        replace: ''
+
+    - name: Restart sshd service
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
+...

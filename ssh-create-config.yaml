@@ -1,0 +1,16 @@
+---
+# ansible-playbook ssh-create-config.yaml
+- hosts: localhost
+  gather_facts: True
+  tasks:
+
+  - name: Create SSH config file
+    copy:
+      dest: "~/.ssh/config"
+      content: |
+        Host <HOST1>
+          Hostname <HOST1-IP>
+          User <HOST1-UN>
+          Port <HOST1-PORT>
+      mode: '0600'
+...

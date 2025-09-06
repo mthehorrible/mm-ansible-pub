@@ -1,0 +1,20 @@
+---
+# ansible-playbook -i hosts -l test -k uptime-check.yaml
+- name: Get the list of all machines running for over a month
+  hosts: all
+  gather_facts: false
+  tasks:
+
+  - name: Check current uptime
+    shell: cut -d ' ' -f1 /proc/uptime
+    register: CURRENT_UPTIME
+
+  - name: Setting fact for number of days
+    set_fact:
+      uptime_days: "{{ (CURRENT_UPTIME.stdout | int / 86400) | round(0) }}"
+
+  - name: Display how many days since reboot
+    debug:
+      msg: "{{ inventory_hostname }} has not been reboot in {{ uptime_days }} days"
+#        when: (uptime_days | int) > 30
+...
