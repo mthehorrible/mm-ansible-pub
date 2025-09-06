@@ -1,0 +1,21 @@
+---
+# ansible-playbook windows/win-users-add.yaml --ask-vault-pass -l test
+- hosts: all
+  vars:
+    new_user: <USER>
+    new_user_full_name: <USER-FULLL-NAME>
+    new_user_password: <USER-PASSWORD>
+  vars_files:
+    'win-passwords.yaml'
+  tasks:
+
+  - name: Create user and add to Administrators group
+    ansible.windows.win_user:
+      name: "{{ new_user }}"
+      fullname: "{{ new_user_full_name }}"
+      password: "{{ new_user_password }}"
+      state: present
+      password_never_expires: true
+      groups:
+        - Administrators
+...

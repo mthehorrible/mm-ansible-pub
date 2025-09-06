@@ -1,0 +1,73 @@
+---
+# ansible-playbook windows/win-choco-packages.yaml --ask-vault-pass -l test
+- name: Manage Chocolatey installed packages
+  hosts: all
+  vars_files:
+    'win-passwords.yaml'
+  tasks:
+
+  - name: Ensure Chocolatey itself is installed
+    win_chocolatey:
+      name: chocolatey
+
+  - name: Install 7-Zip through Chocolatey
+    win_chocolatey:
+      name: 7zip
+      state: present
+
+  - name: Install FileZilla through Chocolatey
+    win_chocolatey:
+      name: filezilla
+      state: present
+
+  - name: Install Firefox through Chocolatey
+    win_chocolatey:
+      name: firefox
+      state: present
+
+  - name: Install Microsoft Edge through Chocolatey
+    win_chocolatey:
+      name: microsoft-edge
+      state: present
+    when: ansible_facts['distribution'] is not match("Microsoft Windows 11")
+
+  - name: Install Notepad++ through Chocolatey
+    win_chocolatey:
+      name: notepadplusplus
+      state: present
+
+  - name: Install Pidgin through Chocolatey
+    win_chocolatey:
+      name: pidgin
+      state: present
+
+  - name: Install PuTTY through Chocolatey
+    win_chocolatey:
+      name: putty
+      state: present
+
+  - name: Install QEMU Guest Agent through Chocolatey
+    win_chocolatey:
+      name: qemu-guest-agent
+      state: present
+
+  - name: Install Tailscale through Chocolatey
+    win_chocolatey:
+      name: tailscale
+      state: present
+
+  - name: Install VLC through Chocolatey
+    win_chocolatey:
+      name: vlc
+      state: present
+
+  - name: Install Visual Studio Code through Chocolatey
+    win_chocolatey:
+      name: vscode
+      state: present
+
+  - name: Update installed packages through Chocolatey
+    win_chocolatey:
+      name: all
+      state: latest
+...

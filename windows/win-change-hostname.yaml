@@ -1,0 +1,27 @@
+---
+# ansible-playbook windows/win-change-hostname.yaml --ask-vault-pass -l test
+- hosts: all
+  vars:
+    new_hostname: <NEW-HOSTNAME>
+    new_workgroup: <NEW-WORKGROUP>
+  vars_files:
+    'win-passwords.yaml'
+  tasks:
+
+  - name: Set hostname
+    ansible.windows.win_hostname:
+      name: "{{ new_hostname }}"
+    register: hostname_res
+
+  - name: Set workgroup
+    microsoft.ad.membership:
+      workgroup_name: "{{ new_workgroup }}"
+      domain_admin_user: '{{ ansible_user }}'
+      domain_admin_password: '{{ ansible_password }}'
+      state: workgroup
+    register: workgroup_res
+
+  - name: Reboot
+    ansible.windows.win_reboot:
+    when: (hostname_res.reboot_required) or (workgroup_res.reboot_required)
+...

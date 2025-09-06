@@ -1,0 +1,22 @@
+---
+# ansible-playbook -i hosts -l test windows/win-files.yaml --ask-vault-pass
+- hosts: all
+  vars_files:
+    'win-passwords.yaml'
+  tasks:
+
+  - name: Create Ansible folder
+    win_file:
+      path: C:\Ansible
+      state: directory
+
+  - name: Create text file
+    win_file:
+      path: C:\Ansible\test.txt
+      state: touch
+
+  - name: Remove ansible_rm folder
+    win_file:
+      path: C:\ansible_rm
+      state: absent
+...
