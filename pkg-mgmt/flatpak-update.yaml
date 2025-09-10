@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true #Needed for system install, remove for user install
+  
+  tasks:
+
+  - name: Update Flatpaks
+    shell:
+      cmd: flatpak update --noninteractive
+    register: fpupdate_output
+
+  - debug:
+      var: fpupdate_output.stdout_lines
+...

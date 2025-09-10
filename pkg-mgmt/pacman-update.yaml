@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: true
+  
+  tasks:
+
+  - name: Update pacman cache
+    community.general.pacman:
+      update_cache: yes
+    register: pmcache_output
+
+  - debug:
+      var: pmcache_output.stdout_lines
+
+  - name: Update pacman packages
+    community.general.pacman:
+      upgrade: yes
+    register: pmupdate_output
+
+  - debug:
+      var: pmupdate_output.packages
+...

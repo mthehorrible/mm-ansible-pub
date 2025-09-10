@@ -1,0 +1,42 @@
+---
+- hosts: all
+  become: true
+  vars:
+    service: "postgresql"
+
+  tasks:
+
+    - name: Stop PostgreSQL service
+      ansible.builtin.service:
+        name: "{{ service }}"
+        state: stopped
+
+    - name: Install latest dnf updates
+      ansible.builtin.dnf:
+        name: '*'
+        state: latest
+
+    - name: Disable PostgreSQL service
+      ansible.builtin.service:
+        name: "{{ service }}"
+        enabled: no
+
+    - name: Reboot machines
+      ansible.builtin.reboot:
+        post_reboot_delay: 5
+        connect_timeout: 120
+
+    - name: Pause for 30 seconds for services to start
+      ansible.builtin.pause:
+        seconds: 30
+
+    - name: Enable PostgreSQL service
+      ansible.builtin.service:
+        name: "{{ service }}"
+        enabled: yes
+
+    - name: Start PostgreSQL service
+      ansible.builtin.service:
+        name: "{{ service }}"
+        state: started
+...

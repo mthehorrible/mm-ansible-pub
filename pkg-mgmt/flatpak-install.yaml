@@ -1,6 +1,7 @@
 ---
 - hosts: all
-  become: True #Needed for system install, remove for user install
+  become: true #Needed for system install, remove for user install
+
   tasks:
     - name: Add the flathub flatpak repository remote
       community.general.flatpak_remote:
